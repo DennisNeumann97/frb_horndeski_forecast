@@ -11,16 +11,15 @@ After cloning the repository, create a new conda environment with the provided Y
 Then, we need to install the provided \texttt{hi_class} package from INSERT MATTEO:
 
     cd external_packages
-    tar xf hi_class_public_modified.tar.gz
+    tar -xf hi_class_public_modified.tar.gz
     cd hi_class_public
     
     make clean
     make
 
 ## Usage
-This repository contains four major parts, which are all computationally expensive: \textbf{Simulation}, \textbf{Training}, \textbf{MCMC sampling} and \textbf{Fisher forecasting}
+This repository contains three major parts, which are all computationally expensive: **Simulation**, **Training** and **MCMC sampling**.
 
-------------------------------
 ### Simulation
 Simulation of (non-)linear matter power spectrum $P_{\mathrm{mm}}^{\mathrm{(NL)}}(k,z)$, electron bias $b_\mathrm{e}(k,z)$ , ratio of bardeen potentials $\eta(k,z)$, modified gravity change to the Poisson equation $\mu(k,z)$ and comoving distance. Adjust your prefered settings (like prior bounds, number of cores, number of samples) inside the "pk_sim_main.py" file inside the "simulation" directory, then run
 
@@ -33,11 +32,9 @@ The training and validation data of our paper is saved on dropbox and can be dow
     wget -O modified_gravity_lambcdm_training_samples.tar.gz "https://www.dropbox.com/scl/fi/ou8yr6ohvrwfhfhsp7usf/modified_gravity_lambcdm_training_samples.tar.gz?rlkey=r3dyhxottr9q1xiplesmnxkw2&st=cu7t4uqe&dl=1" 
     tar -xf modified_gravity_lambcdm_training_samples.tar.gz
 
-------------------------------
 ### Training
-The \texttt{cosmopower} training settings can be adjusted in the "pk_training_script.py" file. Simply run it to train the model on the data contained in "simulation/output_files/training/". Our pretrained models are stored in "training/trained_models"; feel free to use them.
+The $\texttt{cosmopower}$ training settings can be adjusted in the "pk_training_script.py" file. Simply run it to train the model on the data contained in "simulation/output_files/training/". Our pretrained models are stored in "training/trained_models"; feel free to use them.
 
-------------------------------
 ### MCMC-sampling
 Run
 
@@ -45,7 +42,6 @@ Run
 
 with your preferred settings put into the .py file. The script will look for the \texttt{cosmopower} models inside "training/trained_models/" and use them for the sampling. A minimal working example for calling the models is provided in the notebook "trained_cp_call.ipynb".
 
-------------------------------
 
 ## References
 
