@@ -8,7 +8,7 @@ After cloning the repository, create a new conda environment with the provided Y
     conda env create -f env.yml 
     conda activate frb_horndeski_forecast
 
-Then, we need to install the provided $\texttt{hiclass}$ package from INSERT MATTEO:
+Then, we need to install the provided $\texttt{hiclass}$ package modified by [Spurio Mancini et al. 2018](https://academic.oup.com/mnras/article/480/3/3725/5063592):
 
     cd external_packages
     tar -xf hi_class_public_modified.tar.gz
@@ -48,4 +48,4 @@ with your preferred settings put into the .py file. The script will look for the
 
 ## References
 
-Feel free to use and adapt this code however you like, but please cite our paper (INSERT) and the corresponding packages you use (NAUTILUS, COSMOPOWER, HICLASS, CLASS, HMCODE, )
+Feel free to use and adapt this code however you like, but please cite our paper (INSERT) and the corresponding packages you use ([cosmopower](https://github.com/alessiospuriomancini/cosmopower), [hi_class](https://github.com/miguelzuma/hi_class_public), [nautilus](https://github.com/johannesulf/nautilus), [pyccl](https://github.com/LSSTDESC/CCL), [hmcode](https://github.com/alexander-mead/HMcode)).
