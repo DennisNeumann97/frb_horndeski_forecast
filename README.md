@@ -23,7 +23,7 @@ This repository contains three major parts, which are all computationally expens
 ### Simulation
 Simulation of (non-)linear matter power spectrum $P_{\mathrm{mm}}^{\mathrm{(NL)}}(k,z)$, electron bias $b_\mathrm{e}(k,z)$ , ratio of bardeen potentials $\eta(k,z)$, modified gravity change to the Poisson equation $\mu(k,z)$ and comoving distance. Adjust your prefered settings (like prior bounds, number of cores, number of samples) inside the "pk_sim_main.py" file inside the "simulation" directory, then run
 
-    python pk_sim_main.py
+    python simulation/pk_sim_main.py
 The code saves the initial parameter suggestion as "raw_lhc_params.npy", and the successfull simulations and their parameters are stored on the fly in "hiclass_pk_simulation.h5py" and "hiclass_param_dict.h5py", respectively.
 
 The training and validation data of our paper is saved on dropbox and can be downloaded by running the following lines from from the parent directory:
@@ -33,7 +33,10 @@ The training and validation data of our paper is saved on dropbox and can be dow
     tar -xf modified_gravity_lambcdm_training_samples.tar.gz
 
 ### Training
-The $\texttt{cosmopower}$ training settings can be adjusted in the "pk_training_script.py" file. Simply run it to train the model on the data contained in "simulation/output_files/training/". Our pretrained models are stored in "training/trained_models"; feel free to use them.
+The $\texttt{cosmopower}$ training settings can be adjusted in the "pk_training_script.py" file. Simply run
+
+    python training/pk_training_script.py
+to train the model on the data contained in "simulation/output_files/training/". Our pretrained models are stored in "training/trained_models"; feel free to use them.
 
 ### MCMC-sampling
 Run
