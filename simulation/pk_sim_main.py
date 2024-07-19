@@ -34,6 +34,10 @@ class pk_sim_sample_params:
         return self.sample_scaled
 # -------------------------------------------------------------------------------------------------
 
+# Create directory
+if not os.path.exists('./output_files/'):
+    os.makedirs('./output_files/')
+
 # Initializing latin hyper cube
 # -------------------------------------------------------------------------------------------------
 N_sim = 100000  # Number of simulation
