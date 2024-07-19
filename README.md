@@ -8,7 +8,7 @@ After cloning the repository, create a new conda environment with the provided Y
     conda env create -f env.yml 
     conda activate frb_horndeski_forecast
 
-Then, we need to install the provided \texttt{hi_class} package from INSERT MATTEO:
+Then, we need to install the provided $\texttt{hiclass}$ package from INSERT MATTEO:
 
     cd external_packages
     tar -xf hi_class_public_modified.tar.gz
