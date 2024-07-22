@@ -1,10 +1,10 @@
-# FRB-Horndeski-forecast
+# frb_horndeski_forcast
 Open Source Code used in arxiv:INSERT
 
 ## Installing
 After cloning the repository, create a new conda environment with the provided YAML file
 
-    cd FRB-Horndeski-forecast
+    cd frb_horndeski_forcast
     conda env create -f env.yml 
     conda activate frb_horndeski_forecast
 
