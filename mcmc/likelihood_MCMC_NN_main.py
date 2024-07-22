@@ -119,7 +119,7 @@ points, log_w, log_l = sampler.posterior()
 print('Took me ',np.round((tend-tstart)/60),' minutes.')
 
 # Create directory
-if not os.path.exists('./output_files/'+outdir):mkdir
+if not os.path.exists('./output_files/'+outdir):
     os.makedirs('./output_files/'+outdir)
   
 np.save('./output_files/'+outdir+'MCMC'+name+'_points', points)
