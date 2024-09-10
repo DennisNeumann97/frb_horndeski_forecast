@@ -43,7 +43,7 @@ Run
 
     python mcmc/likelihood_MCMC_NN_main.py
 
-with your preferred settings put into the .py file. The script will look for the \texttt{cosmopower} models inside "training/trained_models/" and use them for the sampling. A minimal working example for calling the models is provided in the notebook "trained_cp_call.ipynb".
+with your preferred settings put into the .py file. The script will look for the *cosmopower* models inside "training/trained_models/" and use them for the sampling. A minimal working example for calling the models is provided in the notebook "trained_cp_call.ipynb".
 
 
 ## References
