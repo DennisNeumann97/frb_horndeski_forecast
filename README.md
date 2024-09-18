@@ -1,5 +1,5 @@
 # frb_horndeski_forcast
-Open Source Code used in arxiv:INSERT
+Open Source Code used in [arxiv:2409.11163](https://arxiv.org/abs/2409.11163)
 
 ## Installing
 After cloning the repository, create a new conda environment with the provided YAML file
@@ -48,4 +48,4 @@ with your preferred settings put into the .py file. The script will look for the
 
 ## References
 
-Feel free to use and adapt this code however you like, but please cite our paper (INSERT) and the corresponding packages you use ([cosmopower](https://github.com/alessiospuriomancini/cosmopower), [hi_class](https://github.com/miguelzuma/hi_class_public), [nautilus](https://github.com/johannesulf/nautilus), [pyccl](https://github.com/LSSTDESC/CCL), [hmcode](https://github.com/alexander-mead/HMcode)).
+Feel free to use and adapt this code however you like, but please cite [our paper](https://arxiv.org/abs/2409.11163) and the corresponding packages you use ([cosmopower](https://github.com/alessiospuriomancini/cosmopower), [hi_class](https://github.com/miguelzuma/hi_class_public), [nautilus](https://github.com/johannesulf/nautilus), [pyccl](https://github.com/LSSTDESC/CCL), [hmcode](https://github.com/alexander-mead/HMcode)).
