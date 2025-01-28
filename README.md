@@ -4,7 +4,7 @@ Open Source Code used in [arxiv:2409.11163](https://arxiv.org/abs/2409.11163)
 ## Installing
 After cloning the repository, create a new conda environment with the provided YAML file
 
-    cd frb_horndeski_forcast
+    cd frb_horndeski_forecast
     conda env create -f env.yml 
     conda activate frb_horndeski_forecast
 
