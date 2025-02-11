@@ -23,8 +23,8 @@ input_dict_fid = dict(zip(param_name, param_val_fid))
 
 # Directory of trained models and desired output and name appendix of the output file
 NN_directory = './../training/trained_models/'
-outdir = 'euclid_horndeski_1/'
-name = '_euclid_horndeski_1'
+outdir = 'euclid_horndeski/'
+name = '_euclid_horndeski'
 
 # Number of cores
 n_cores = 4
