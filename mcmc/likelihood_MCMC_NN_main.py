@@ -4,12 +4,9 @@ os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["NUMEXPR_NUM_THREADS"] = "1"
 os.environ["OMP_NUM_THREADS"] = "1"
 
-import multiprocessing as mp
 import time
-from likelihood_MCMC_NN_base import likelihood
-from likelihood_MCMC_NN_base import cosmology_results
+from likelihood_MCMC_NN_base import cosmology_results, planck2018_tt_chi2, likelihood
 import numpy as np
-from copy import deepcopy
 import nautilus as ns
 import cosmopower as cp
 import tensorflow as tf
@@ -29,9 +26,8 @@ name = '_euclid_horndeski'
 # Number of cores
 n_cores = 4
 
-# Desired measurement to sample. Must be either 'autolens', 'autofrb' or 'crossfrblens'
-which_measurement = 'autolens'
-
+# "autolens","autofrb", "crossfrblens", "plancktt", "frblens_plus_plancktt" or "lens_plus_plancktt"
+which_measurement = 'plancktt'
 
 # Creating dictionary of survey params
 alpha = 2.5
@@ -67,11 +63,21 @@ cp_chiz = cp.cosmopower_NN(restore=True, restore_filename=NN_directory+'chiz_mod
 NN_models = {'pkmm_lin': cp_pkmm_lin, 'pkmm_nonlin':cp_pkmm_nonlin,'bias_sq':cp_bias_sq,
            'eta':cp_eta, 'mu':cp_mu, 'chiz':cp_chiz}
 
+# Initialising cosmology class for lensing and FRB fiducial cosmology
+# ---------------------------------------------------------------------------------
 class_dict_fid = {'NN_params':input_dict_fid, 'alpha':alpha, 'N_FRB': N_FRB, 'FRB_bin_num': z_bin_num, 'f_sky_frb': f_sky_frb, 'f_sky_lens': f_sky_lens,
                   'lensing_survey':lensing_survey, 'l_array':l_array, 'redshift_array':redshift_array, 'NN_models':NN_models}
 
 cosmo_fid = cosmology_results(**class_dict_fid)
 Cl_data_full, l_full = cosmo_fid.tomo_Cl_limber_matrix_noise()
+# ---------------------------------------------------------------------------------
+
+# Initialising planck 2018 TT likelihood class
+# ---------------------------------------------------------------------------------
+path_to_fisher = './../planck2018_tt_fisher'
+planck2018_instance = planck2018_tt_chi2(path_to_fisher, param_name)
+planck2018_instance.compute_inverse_covariance()
+# ---------------------------------------------------------------------------------
 
 def likelihood_frb(param_dict):
     return -likelihood(param_dict['Omega_b'], param_dict['Omega_cdm'], param_dict['h'],  param_dict['n_s'],
@@ -88,9 +94,14 @@ def likelihood_frblens(param_dict):
                        param_dict['m_nu'], param_dict['log10_T_heat'], param_dict['sigma8'], param_dict['alpha_B'],
                        param_dict['alpha_M'], param_dict['log10_k_screen'], data=Cl_data_full, models=NN_models, survey_dict=survey_dict)[2]
 
-#param_dict = deepcopy(input_dict_fid)
-#param_dict['log10_k_screen'] = [-0.5]
-#print(likelihood_lens(param_dict))
+def likelihood_plancktt(param_dict):
+    return -0.5*planck2018_instance.chi2_planck_tt(param_dict, input_dict_fid)
+
+def likelihood_frblens_plus_plancktt(param_dict):
+    return likelihood_frblens(param_dict) + likelihood_plancktt(param_dict)
+
+def likelihood_lens_plus_plancktt(param_dict):
+    return likelihood_lens(param_dict) + likelihood_plancktt(param_dict)
 
 params_name = ['Omega_b', 'Omega_cdm', 'h', 'n_s', 'm_nu', 'log10_T_heat', 'sigma8', 'alpha_B', 'alpha_M', 'log10_k_screen']
 params_lbound = [0.015,      0.18,     0.38, 0.7,  0.003,      7,             0.7,      0.,        0.,       -2]
@@ -108,8 +119,14 @@ if __name__=='__main__':
             sampler = ns.Sampler(prior=prior, likelihood=likelihood_frb, filepath='./output_files/'+outdir+'MCMC_NN_checkpoint'+name+'.hdf5', pool=n_cores)
         elif which_measurement == 'crossfrblens':
             sampler = ns.Sampler(prior=prior, likelihood=likelihood_frblens, filepath='./output_files/'+outdir+'MCMC_NN_checkpoint'+name+'.hdf5', pool=n_cores)
+        elif which_measurement == 'plancktt':
+            sampler = ns.Sampler(prior=prior, likelihood=likelihood_plancktt, filepath='./output_files/'+outdir+'MCMC_NN_checkpoint'+name+'.hdf5', pool=n_cores)
+        elif which_measurement == 'frblens_plus_plancktt':
+            sampler = ns.Sampler(prior=prior, likelihood=likelihood_frblens_plus_plancktt, filepath='./output_files/'+outdir+'MCMC_NN_checkpoint'+name+'.hdf5', pool=n_cores)
+        elif which_measurement == 'lens_plus_plancktt':
+            sampler = ns.Sampler(prior=prior, likelihood=likelihood_lens_plus_plancktt, filepath='./output_files/'+outdir+'MCMC_NN_checkpoint'+name+'.hdf5', pool=n_cores)
         else:
-            print('Cannot proceed: Use which_measurement="autolens","autofrb" or "crossfrblens".')
+            print('Cannot proceed: Use which_measurement="autolens","autofrb", "crossfrblens", "plancktt", "frblens_plus_plancktt" or "lens_plus_plancktt"')
 
         sampler.run(verbose=True)
         tend = time.time()
@@ -144,7 +161,7 @@ text = ['Settings of the MCMC contained in this folder',
         '--------------------------------------------------',
         'General settings: '+', '.join(general_list),
         '--------------------------------------------------',
-        'Further comments: set alpha_B=alpha_M=1']
+        'Further comments: -']
 with open('./output_files/'+outdir+'MCMC'+name+'_settings.txt', 'w') as f:
     for line in text:
         f.write(line)

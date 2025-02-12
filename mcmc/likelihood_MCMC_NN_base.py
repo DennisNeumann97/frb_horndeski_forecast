@@ -331,6 +331,70 @@ class cosmology_results:
         return SNR, l_arr
 # ---------------------------------------------------------------------------------
 
+# Creating Planck chi2 class
+# ---------------------------------------------------------------------------------
+class planck2018_tt_chi2:
+    def __init__(
+        self,
+        path_to_fisher_matrix,
+        mcmc_parameter_label,
+    ):
+        
+        self.path_to_fisher_matrix = path_to_fisher_matrix
+        self.mcmc_parameter_label = mcmc_parameter_label
+
+    def __rename_labels(self, raw_fisher_labels):
+        raw_fisher_labels[1] = 'Omega_b'
+        raw_fisher_labels[2] = 'sigma8'
+        raw_fisher_labels[4] = 'n_s'
+        raw_fisher_labels[7] = 'log10_T_heat'
+        raw_fisher_labels[8] = 'Omega_cdm'
+
+        return raw_fisher_labels
+    
+    def __find_label_position_for_reordering_matrix(self, label_input):
+        label_position = []
+        for label in self.mcmc_parameter_label:
+            label_position.append(label_input.index(label))
+
+        return label_position
+    
+    def __get_covariance_from_fisher(self):
+
+        fisher_matrix = np.loadtxt(self.path_to_fisher_matrix)
+        with open(self.path_to_fisher_matrix, 'r') as f:
+            input_labels = eval(f.readline().strip().strip('# '))
+        fisher_matrix[7,7] = 1e-5
+
+        # Extend fisher matrix with horndeski parameters
+        extension_labels = ['alpha_B', 'alpha_M', 'log10_k_screen']
+        input_labels.extend(extension_labels)
+        total_length = len(fisher_matrix)+len(extension_labels)
+        fisher_matrix_extend = np.eye(total_length)*1e-5
+        fisher_matrix_extend[:len(fisher_matrix),:len(fisher_matrix)] = fisher_matrix
+
+        input_labels = self.__rename_labels(input_labels)
+        label_positions = self.__find_label_position_for_reordering_matrix(input_labels)
+
+        covariance_matrix = np.linalg.inv(fisher_matrix_extend)
+        covariance_matrix_reordered = covariance_matrix[label_positions][:,label_positions]
+
+        return covariance_matrix_reordered
+    
+    def compute_inverse_covariance(self):
+        covariance = self.__get_covariance_from_fisher()
+        self.inverse_covariance = np.linalg.inv(covariance)
+    
+    def chi2_planck_tt(self, param_dict, param_fiducial):
+        labels = param_fiducial.keys()
+        input_array = np.array([param_dict[label] for label in labels])
+        fiducial_array = np.array([param_fiducial[label] for label in labels])
+        
+        chi2 = (input_array-fiducial_array).T @ self.inverse_covariance @ (input_array-fiducial_array)
+
+        return chi2
+# ---------------------------------------------------------------------------------
+
 # Defining likelihood
 # ---------------------------------------------------------------------------------
 def likelihood(Omega_b, Omega_cdm, h, n_s, m_nu, log10_T_heat, sigma8, alpha_B, alpha_M, log10_k_screen, data, models, survey_dict):
@@ -408,3 +472,4 @@ def likelihood(Omega_b, Omega_cdm, h, n_s, m_nu, log10_T_heat, sigma8, alpha_B, 
     L_avg = np.sum(summand_all,axis=-1)
 
     return L_avg
+# ---------------------------------------------------------------------------------
