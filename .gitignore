@@ -2,7 +2,7 @@
 # -------------------------------------
 # Large and checkpoint files
 *.h5py
-*.h5df
+*.hdf5
 # ------------------------------------
 
 # Byte-compiled / optimized / DLL files

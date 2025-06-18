@@ -1,0 +1,10 @@
+Settings of the MCMC contained in this folder
+--------------------------------------------------
+Order of Parameters: Omega_b, Omega_cdm, h, n_s, m_nu, log10_T_heat, sigma8, alpha_B, alpha_M, log10_k_screen
+Fiducial cosmology: 0.04931, 0.2642, 0.674, 0.965, 0.06, 7.8, 0.811, 1.0, 1.0, -1
+Lower priorbound: 0.015, 0.18, 0.38, 0.7, 0.003, 7, 0.7, 0.0, 0.0, -2
+Upper priorbound: 0.1, 0.34, 1.0, 1.25, 1.5, 8.6, 0.92, 2.5, 3.0, 0.3010299956639812
+--------------------------------------------------
+General settings: alpha: 2.5, FRB_num: 10000.0, FRB_binnum: 4, f_sky_frb: 0.7, f_sky_lens: 0.3, l_min: 1, l_max: 5000
+--------------------------------------------------
+Further comments: alpha_B=alpha_M=1 
