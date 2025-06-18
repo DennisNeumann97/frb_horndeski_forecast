@@ -367,7 +367,10 @@ class planck2018_tt_chi2:
         fisher_matrix[7,7] = 1e-5
 
         # Extend fisher matrix with horndeski parameters
-        extension_labels = ['alpha_B', 'alpha_M', 'log10_k_screen']
+        if 'planck2018_tt_fisher_mg' in self.path_to_fisher_matrix:
+            extension_labels = ['log10_k_screen']
+        else:
+            extension_labels = ['alpha_B', 'alpha_M', 'log10_k_screen']
         input_labels.extend(extension_labels)
         total_length = len(fisher_matrix)+len(extension_labels)
         fisher_matrix_extend = np.eye(total_length)*1e-5
