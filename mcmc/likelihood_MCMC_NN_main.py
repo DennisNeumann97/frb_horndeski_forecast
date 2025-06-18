@@ -20,14 +20,20 @@ input_dict_fid = dict(zip(param_name, param_val_fid))
 
 # Directory of trained models and desired output and name appendix of the output file
 NN_directory = './../training/trained_models/'
-outdir = 'euclid_horndeski/'
-name = '_euclid_horndeski'
+outdir = 'euclid_high_horndeski/'
+name = '_euclid_high_horndeski'
+
+# Additional comments to put into the simulation settings look file
+comments = '-'
+
+# Path to Planck fisher matrix
+path_to_fisher = './../planck2018_tt_fisher_matrices/planck2018_tt_fisher_mg'
 
 # Number of cores
-n_cores = 4
+n_cores = 20
 
 # "autolens","autofrb", "crossfrblens", "plancktt", "frblens_plus_plancktt" or "lens_plus_plancktt"
-which_measurement = 'plancktt'
+which_measurement = 'autolens'
 
 # Creating dictionary of survey params
 alpha = 2.5
@@ -74,7 +80,6 @@ Cl_data_full, l_full = cosmo_fid.tomo_Cl_limber_matrix_noise()
 
 # Initialising planck 2018 TT likelihood class
 # ---------------------------------------------------------------------------------
-path_to_fisher = './../planck2018_tt_fisher'
 planck2018_instance = planck2018_tt_chi2(path_to_fisher, param_name)
 planck2018_instance.compute_inverse_covariance()
 # ---------------------------------------------------------------------------------
@@ -161,7 +166,7 @@ text = ['Settings of the MCMC contained in this folder',
         '--------------------------------------------------',
         'General settings: '+', '.join(general_list),
         '--------------------------------------------------',
-        'Further comments: -']
+        f'Further comments: {comments}']
 with open('./output_files/'+outdir+'MCMC'+name+'_settings.txt', 'w') as f:
     for line in text:
         f.write(line)
