@@ -35,20 +35,21 @@ class pk_sim_sample_params:
 # -------------------------------------------------------------------------------------------------
 
 # Create directory
-if not os.path.exists('./output_files/'):
-    os.makedirs('./output_files/')
+simulation_type = 'training'  # 'training' or  'validation'
+if not os.path.exists(f'./output_files/{simulation_type}/'):
+    os.makedirs(f'./output_files/{simulation_type}/')
 
 # Initializing latin hyper cube
 # -------------------------------------------------------------------------------------------------
-N_sim = 100000  # Number of simulation
+N_sim = 150000  # Number of simulation
 
 params_name = ['Omega_b', 'Omega_cdm', 'h', 'n_s', 'm_nu', 'log10_T_heat', 'sigma8', 'alpha_B', 'alpha_M', 'k_screen', 'z_val']
 params_lbound = [0.015,      0.18,     0.38, 0.7,  0.003,      7,             0.7,      0.,        0.,        -2,         0.]
 params_ubound = [0.1,        0.34,      1., 1.25,   1.5,      8.6,            0.92,     2.5,       3.,   np.log10(2.),   4.5]
 
-if './output_files/raw_lhc_params.npy' in glob('./output_files/*'):
-    sim_arr = np.load('./output_files/raw_lhc_params.npy')
-    with h5py.File("./output_files/hiclass_pk_simulation.h5py", 'r') as data_func:
+if f'./output_files/{simulation_type}/raw_lhc_params.npy' in glob(f'./output_files/{simulation_type}/*'):
+    sim_arr = np.load(f'./output_files/{simulation_type}/raw_lhc_params.npy')
+    with h5py.File(f"./output_files/{simulation_type}/hiclass_pk_simulation.h5py", 'r') as data_func:
         previous_sim_num = len(data_func['Pkmm_lin'][:,0])
 else:
     sim_instance = pk_sim_sample_params(params_name, params_lbound, params_ubound, N_sim)
@@ -58,7 +59,7 @@ else:
     sim_arr[:,-2] = 10**sim_arr[:,-2]
     # ------------------------------------
     previous_sim_num = 0
-    np.save('./output_files/raw_lhc_params.npy', sim_arr)
+    np.save(f'./output_files/{simulation_type}/raw_lhc_params.npy', sim_arr)
 
 print('Starting at filenumber ',previous_sim_num)
 # -------------------------------------------------------------------------------------------------
@@ -68,32 +69,45 @@ print('Starting at filenumber ',previous_sim_num)
 k_num = 200
 z_num = 200
 pdim = len(params_name)
-filenames = glob("./output_files/*")
+filenames = glob(f"./output_files/{simulation_type}/*")
 
-if "./output_files/hiclass_pk_simulation.h5py" in filenames:
+if f"./output_files/{simulation_type}/hiclass_pk_simulation.h5py" in filenames:
     pass
 else:
-    with h5py.File("./output_files/hiclass_pk_simulation.h5py", "w") as file_pksim:
+    with h5py.File(f"./output_files/{simulation_type}/hiclass_pk_simulation.h5py", "w") as file_pksim:
         function_label = ['Pkmm_lin', 'Pkmm_nonlin', 'bias_sq', 'eta_of_k', 'mu_of_k']
         for label in function_label:
             creater =  file_pksim.create_dataset(name=label, shape=(0,k_num), maxshape=(None,k_num))
         creater = file_pksim.create_dataset(name='chi_of_z', shape=(0,z_num), maxshape=(None,z_num))
 
-if "./output_files/hiclass_param_dict.h5py" in filenames:
+if f"./output_files/{simulation_type}/hiclass_param_dict.h5py" in filenames:
     pass
 else:
-    with h5py.File("./output_files/hiclass_param_dict.h5py", "w") as file_param_dict:
+    with h5py.File(f"./output_files/{simulation_type}/hiclass_param_dict.h5py", "w") as file_param_dict:
         label = 'input_params'
         creater = file_param_dict.create_dataset(name=label, shape=(0,pdim), maxshape=(None,pdim))
 # -------------------------------------------------------------------------------------------------
 
+# Creating wrapper for sim_to_file
+# -------------------------------------------------------------------------------------------------
+def cosmo_sim_to_file_wrapper(Omega_b, Omega_cdm, h, n_s, m_nu, log10_T_heat, sigma8, alpha_B, alpha_M, k_screen, z_val):
+    """
+    Wrapper for the cosmo_sim_to_file function to be used with multiprocessing.
+    """
+    return cosmo_sim_to_file(Omega_b=Omega_b, Omega_cdm=Omega_cdm, h=h, n_s=n_s,
+                             m_nu=m_nu, log10_T_heat=log10_T_heat, sigma8=sigma8,
+                             alpha_B=alpha_B, alpha_M=alpha_M, k_screen=k_screen,
+                             z_val=z_val,
+                             simulation_type=simulation_type)
+# -------------------------------------------------------------------------------------------------
+
 # Calling multiprocessing
 # -------------------------------------------------------------------------------------------------
-CPU_num = 4     # number of used processors
+CPU_num = 120     # number of used processors
 start = time.time()
 if __name__ == '__main__':
     with mp.Pool(processes=CPU_num)  as p:
-        results = p.starmap(cosmo_sim_to_file, sim_arr[previous_sim_num:,:])
+        results = p.starmap(cosmo_sim_to_file_wrapper, sim_arr[previous_sim_num:,:])
 end = time.time()
 
 print("Took me", (end-start)/60, "minutes.")
