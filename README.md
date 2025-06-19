@@ -20,6 +20,10 @@ Then, we need to install the provided $\texttt{hiclass}$ package modified by [Sp
 ## Usage
 This repository contains three major parts, which are all computationally expensive: **Simulation**, **Training** and **MCMC sampling**.
 
+<div style="border: 2px solid red; padding: 10px; border-radius: 5px; background-color: #fff3cd;">
+  <strong>⚠️ WARNING: Due to a bug the emulator works with 6 ultrarelativistic species instead of 3, significantly altering the power spectra. We are currently rerunning the calculations and training and should have the new model online before the end of June 2025. The publication will be corrected accordingly. </strong>
+</div>
+
 ### Simulation
 Simulation of (non-)linear matter power spectrum $P_{\mathrm{mm}}^{\mathrm{NL}}(k,z)$, electron bias $b_\mathrm{e}(k,z)$ , ratio of bardeen potentials $\eta(k,z)$, modified gravity change to the Poisson equation $\mu(k,z)$ and comoving distance. Adjust your prefered settings (like prior bounds, number of cores, number of samples) inside the "pk_sim_main.py" file inside the "simulation" directory, then run
 
