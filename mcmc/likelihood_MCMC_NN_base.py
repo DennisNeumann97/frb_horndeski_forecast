@@ -302,7 +302,7 @@ class cosmology_results:
         data = np.moveaxis(data[:self.FRB_bin_num, :self.FRB_bin_num, :], -1, 0)
         covar_inv = np.linalg.inv(covar)
         argument = (data@covar_inv)@(data@covar_inv)
-        SNR = (l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
+        SNR = self.f_sky_frb*(l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
 
         return SNR, l_arr
 
@@ -314,7 +314,7 @@ class cosmology_results:
         data = np.moveaxis(data[self.FRB_bin_num:, self.FRB_bin_num:, :], -1, 0)
         covar_inv = np.linalg.inv(covar)
         argument = (data@covar_inv)@(data@covar_inv)
-        SNR = (l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
+        SNR = self.f_sky_lens*(l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
 
         return SNR, l_arr
 
@@ -326,7 +326,17 @@ class cosmology_results:
         data = np.moveaxis(data, -1, 0)
         covar_inv = np.linalg.inv(covar)
         argument = (data@covar_inv)@(data@covar_inv)
-        SNR = (l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
+
+        # Split sky into two distinct survey parts with f1, f2 assuming the footprints fully overlap
+        f1 = min(self.f_sky_frb, self.f_sky_lens)
+        f2 = max(self.f_sky_frb, self.f_sky_lens)-f1
+
+        if self.f_sky_frb > self.f_sky_lens:
+            SNR_sq_add = self.SNR_sq_frb()[0]
+        else:
+            SNR_sq_add = self.SNR_sq_lens()[0]
+
+        SNR = f1*(l_arr+0.5)*np.trace(argument, axis1=1, axis2=2) + f2*SNR_sq_add
 
         return SNR, l_arr
 # ---------------------------------------------------------------------------------
