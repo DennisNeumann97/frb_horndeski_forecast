@@ -26,7 +26,7 @@ Simulation of (non-)linear matter power spectrum $P_{\mathrm{mm}}^{\mathrm{NL}}(
     python simulation/pk_sim_main.py
 The code saves the initial parameter suggestion as "raw_lhc_params.npy", and the successfull simulations and their parameters are stored on the fly in "hiclass_pk_simulation.h5py" and "hiclass_param_dict.h5py", respectively.
 
-The training and testing data of our paper is saved on on OneDrive and can be downloaded [here](https://leidenuniv1-my.sharepoint.com/:u:/g/personal/neumannd_vuw_leidenuniv_nl/EZe0HFhqCQ1PtisLHs3ywoABVbHWf9rftwRxvZohYIokMg?download=1).
+The training and testing data of our paper is saved on on OneDrive and can be downloaded [here](https://leidenuniv1-my.sharepoint.com/:u:/r/personal/neumannd_vuw_leidenuniv_nl/Documents/LongTermStorage/hiclass_training_data.tar?download=1).
 To train a model with it, download the tar and extract the contents (folders "training" and "validation") into 
     
     simulation/output_files/
