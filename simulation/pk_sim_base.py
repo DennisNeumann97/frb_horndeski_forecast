@@ -53,7 +53,7 @@ class suppress_stdout_stderr(object):
 # ---------------------------------------------------------------------
 
 def cosmo_sim_to_file(Omega_b, Omega_cdm, h, n_s, m_nu, log10_T_heat, sigma8,
-                      alpha_B, alpha_M, k_screen, z_val):
+                      alpha_B, alpha_M, k_screen, z_val, simulation_type='training'):
 
     tstart=time.time()
     # Initiating Class
@@ -67,8 +67,8 @@ def cosmo_sim_to_file(Omega_b, Omega_cdm, h, n_s, m_nu, log10_T_heat, sigma8,
             'h': h,
             'n_s': n_s,
             'N_ncdm': 3,
-            'm_ncdm': "0.,0.,"+str(m_nu),
-            'N_eff': 3.046,
+            'm_ncdm': f"{m_nu/3}, {m_nu/3}, {m_nu/3}",
+            'N_eff': 0.00641,
             'reio_parametrization': 'reio_camb',
             'z_reio': 7.7,
             'YHe': 0.246,
@@ -158,7 +158,7 @@ def cosmo_sim_to_file(Omega_b, Omega_cdm, h, n_s, m_nu, log10_T_heat, sigma8,
                 'n_s', 'Neff', 'T_cmb', 'wa', 'w0', 'm_nu']
         values = [cosmo.sigma8(), cosmo.h(), cosmo.Omega0_m(), cosmo.Omega_b(),\
                 cosmo.Omega0_cdm(), cosmo.Omega_Lambda(), cosmo.n_s(), cosmo.Neff(),\
-                cosmo.T_cmb(), 0., -1., [0., 0., m_nu]]
+                cosmo.T_cmb(), 0., -1., [m_nu/3, m_nu/3, m_nu/3]]
         dict_cosmo = dict(zip(names, values))
 
         ccl_cosmology = pyccl.Cosmology(Omega_c=dict_cosmo['Omega_cdm'],
@@ -224,8 +224,8 @@ def cosmo_sim_to_file(Omega_b, Omega_cdm, h, n_s, m_nu, log10_T_heat, sigma8,
     # ---------------------------------------------------------------------
     if hm_bool:
         try:
-            with h5py.File("./output_files/hiclass_pk_simulation.h5py", "r+") as file_pksim:
-                with h5py.File("./output_files/hiclass_param_dict.h5py", "r+") as file_param_dict:
+            with h5py.File(f"./output_files/{simulation_type}/hiclass_pk_simulation.h5py", "r+") as file_pksim:
+                with h5py.File(f"./output_files/{simulation_type}/hiclass_param_dict.h5py", "r+") as file_param_dict:
 
                     # Extending the files...
                     # ... for the 5 target functions

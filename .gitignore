@@ -3,6 +3,10 @@
 # Large and checkpoint files
 *.h5py
 *.hdf5
+
+# hi_class folder
+external_packages/hi_class_public
+contour_plots/old
 # ------------------------------------
 
 # Byte-compiled / optimized / DLL files

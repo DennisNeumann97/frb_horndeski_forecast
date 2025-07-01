@@ -10,7 +10,7 @@ import matplotlib as mpl
 
 # Load in validation data and removing duplicates
 # ------------------------------------------------------------
-with h5py.File("./../simulation/output_files/validation/hiclass_pk_simulation_validation.h5py", 'r') as data_func:
+with h5py.File("./../simulation/output_files/validation/hiclass_pk_simulation.h5py", 'r') as data_func:
     Pkmm_lin_validation, unique_idx = np.unique(10**data_func['Pkmm_lin'][:,:],axis=0, return_index=True)
     Pkmm_nonlin_validation = 10**data_func['Pkmm_nonlin'][:,:][unique_idx]
     bias_sq_validation = 10**data_func['bias_sq'][:,:][unique_idx]
@@ -19,7 +19,7 @@ with h5py.File("./../simulation/output_files/validation/hiclass_pk_simulation_va
     chiz_validation = data_func['chi_of_z'][:,:][unique_idx]
 print('Training data shape:', np.shape(Pkmm_lin_validation))
 
-with h5py.File("./../simulation/output_files/validation/hiclass_param_dict_validation.h5py", 'r') as data_param:
+with h5py.File("./../simulation/output_files/validation/hiclass_param_dict.h5py", 'r') as data_param:
     validation_params = data_param['input_params'][:,:][unique_idx]
 print('Training parameters shape:', np.shape(validation_params))
 
@@ -118,7 +118,7 @@ for i in range(5):
     axes[i].set_ylabel(r'number count, $N$')
 
 # Show the figure.
-plt.savefig('./validation_plot/mean_and_max_deviation/deviation_full_hist.png', bbox_inches='tight')
+plt.savefig('./validation_plot/deviation_full_hist.png', bbox_inches='tight')
 
 
 

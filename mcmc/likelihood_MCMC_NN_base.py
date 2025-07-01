@@ -1,14 +1,14 @@
 # Loading in all relevant packages
 # ----------------------------------------------------------------------------
-from classy import Class                         # Class python wrapper
+# from classy import Class                         # Class python wrapper
 import numpy as np                               # 1000€ calculator
 import matplotlib.pyplot as plt                  # 1000€ drawing board
 import matplotlib as mpl
 import astropy.constants as const
 import astropy.units as u
-import pyhmcode
-import pyhmcode.halo_profile_utils
-import pyccl
+# import pyhmcode
+# import pyhmcode.halo_profile_utils
+# import pyccl
 from scipy.integrate import trapz
 from scipy.interpolate import interp1d
 from scipy.interpolate import RectBivariateSpline
@@ -43,6 +43,8 @@ class cosmology_results:
             print('Lensing survey not found: Specify "kids" or "euclid" as lensing survey.')
         self.lensing_survey = lensing_survey
         self.lens_bin_num = len(glob(self.lens_z_dir + '/*'))
+        if self.lens_bin_num == 0:
+            raise FileNotFoundError('No lensing redshift bins found. make sure that "photoz/kids_photoz" or "photoz/euclid_photoz" exist in the dir one above the workdir.')
         self.alpha = alpha
         self.N_FRB = N_FRB
         self.n_bar = N_FRB/4/np.pi/self.f_sky_frb   # number of FRB per solid angle
@@ -302,7 +304,7 @@ class cosmology_results:
         data = np.moveaxis(data[:self.FRB_bin_num, :self.FRB_bin_num, :], -1, 0)
         covar_inv = np.linalg.inv(covar)
         argument = (data@covar_inv)@(data@covar_inv)
-        SNR = (l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
+        SNR = self.f_sky_frb*(l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
 
         return SNR, l_arr
 
@@ -314,7 +316,7 @@ class cosmology_results:
         data = np.moveaxis(data[self.FRB_bin_num:, self.FRB_bin_num:, :], -1, 0)
         covar_inv = np.linalg.inv(covar)
         argument = (data@covar_inv)@(data@covar_inv)
-        SNR = (l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
+        SNR = self.f_sky_lens*(l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
 
         return SNR, l_arr
 
@@ -326,7 +328,17 @@ class cosmology_results:
         data = np.moveaxis(data, -1, 0)
         covar_inv = np.linalg.inv(covar)
         argument = (data@covar_inv)@(data@covar_inv)
-        SNR = (l_arr+0.5)*np.trace(argument, axis1=1, axis2=2)
+
+        # Split sky into two distinct survey parts with f1, f2 assuming the footprints fully overlap
+        f1 = min(self.f_sky_frb, self.f_sky_lens)
+        f2 = max(self.f_sky_frb, self.f_sky_lens)-f1
+
+        if self.f_sky_frb > self.f_sky_lens:
+            SNR_sq_add = self.SNR_sq_frb()[0]
+        else:
+            SNR_sq_add = self.SNR_sq_lens()[0]
+
+        SNR = f1*(l_arr+0.5)*np.trace(argument, axis1=1, axis2=2) + f2*SNR_sq_add
 
         return SNR, l_arr
 # ---------------------------------------------------------------------------------
