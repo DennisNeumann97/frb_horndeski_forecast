@@ -1,14 +1,14 @@
 # Loading in all relevant packages
 # ----------------------------------------------------------------------------
-from classy import Class                         # Class python wrapper
+# from classy import Class                         # Class python wrapper
 import numpy as np                               # 1000€ calculator
 import matplotlib.pyplot as plt                  # 1000€ drawing board
 import matplotlib as mpl
 import astropy.constants as const
 import astropy.units as u
-import pyhmcode
-import pyhmcode.halo_profile_utils
-import pyccl
+# import pyhmcode
+# import pyhmcode.halo_profile_utils
+# import pyccl
 from scipy.integrate import trapz
 from scipy.interpolate import interp1d
 from scipy.interpolate import RectBivariateSpline
@@ -43,6 +43,8 @@ class cosmology_results:
             print('Lensing survey not found: Specify "kids" or "euclid" as lensing survey.')
         self.lensing_survey = lensing_survey
         self.lens_bin_num = len(glob(self.lens_z_dir + '/*'))
+        if self.lens_bin_num == 0:
+            raise FileNotFoundError('No lensing redshift bins found. make sure that "photoz/kids_photoz" or "photoz/euclid_photoz" exist in the dir one above the workdir.')
         self.alpha = alpha
         self.N_FRB = N_FRB
         self.n_bar = N_FRB/4/np.pi/self.f_sky_frb   # number of FRB per solid angle

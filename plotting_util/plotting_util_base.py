@@ -136,12 +136,17 @@ class contour_triangle_plot:
         for pair in instance_pairs:
 
             improvement_list = []
+            improvement_list_percent = []
             for name in self.names_samples[pair[0]]:
                 sigma_range1 = self.get_uncertainty_range(pair[0], name)
                 sigma_range2 = self.get_uncertainty_range(pair[1], name)
                 improvement_list.append(sigma_range1/sigma_range2)
+                improvement_list_percent.append((sigma_range1-sigma_range2)/sigma_range1*100)
 
             improvement_dict = dict(zip(self.names_samples[pair[0]], improvement_list))
+            improvement_dict_percent = dict(zip(self.names_samples[pair[0]], improvement_list_percent))
 
-            print("Improvement for instance pair: ", pair)
+            print("Fractional improvement in ratio for instance pair: ", pair)
             print(improvement_dict)
+            print("Fractional improvement in percent for instance pair: ", pair)
+            print(improvement_dict_percent)
