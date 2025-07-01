@@ -7,4 +7,4 @@ Upper priorbound: 0.1, 0.34, 1.0, 1.25, 1.5, 8.6, 0.92, 2.5, 3.0, 0.301029995663
 --------------------------------------------------
 General settings: alpha: 2.5, FRB_num: 10000.0, FRB_binnum: 4, f_sky_frb: 0.7, f_sky_lens: 0.3, l_min: 1, l_max: 5000
 --------------------------------------------------
-Further comments: alpha_B=alpha_M=1
+Further comments: -
